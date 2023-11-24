@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+
+import rospy
+from geometry_msgs.msg import Twist
+import sys, select, termios, tty
+
+class TurtleSpeedController:
+    def __init__(self, turtle_name):
+
+    # Initialize the TurtleSpeedController with a specified turtle name
+        self.turtle_name = turtle_name
+        self.velocity_publisher = rospy.Publisher(f'/{turtle_name}/cmd_vel', Twist, queue_size=10)
+        self.linear_speed = 0.0
+        self.angular_speed = 0.0
+
+    def set_speed(self, linear, angular):
+
+    # Set the linear and angular speeds for the turtle
+        self.linear_speed = linear
+        self.angular_speed = angular
+
+    def publish_speed(self):
+
+    # Publish the current linear and angular speeds
+        vel_msg = Twist()
+        vel_msg.linear.x = self.linear_speed
+        vel_msg.angular.z = self.angular_speed
+        self.velocity_publisher.publish(vel_msg)
+
+def getKey():
+
+# takes input from the user on the keyboard
+    tty.setraw(sys.stdin.fileno())
+    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+    if rlist:
+        key = sys.stdin.read(1)
+    else:
+        key = ''
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    return key
+
+def main():
+
+# Initialize the ROS node and TurtleSpeedController
+    rospy.init_node('turtle_keyboard_controller', anonymous=True)
+    turtle_name = 'turtle1'  # Change this to the name of your turtle
+    turtle_controller = TurtleSpeedController(turtle_name)
+
+    try:
+
+    # Display user instructions
+        print(" 'w' = forward speed level 1")
+        print(" 'q' = forward speed level 2")
+        print(" 'e' = forward speed level 3")
+        print(" 'r' = forward speed level 4")
+        print(" 'd' = backward speed level 1")
+        print(" 'z' = backward speed level 2")
+        print(" 'x' = backward speed level 3")
+        print(" 'c' = backward speed level 4")
+        print(" 'a' = turn clockwise ")
+        print(" 'd' = turn anticlockwise ")
+        print("Press 'f' to exit.")
+        while True:
+            key = getKey()
+            
+            # speeds set on turtle  based on user input
+            if key == 'w':
+                turtle_controller.set_speed(1.0, 0.0)
+            elif key == 's':
+                turtle_controller.set_speed(-1.0, 0.0)
+            elif key == 'a':
+                turtle_controller.set_speed(0.0, 1.0)
+            elif key == 'd':
+                turtle_controller.set_speed(0.0, -1.0)
+            elif key == 'q':
+                turtle_controller.set_speed(2.0, 0.0)
+            elif key == 'e':
+                turtle_controller.set_speed(3.0, 0.0) 
+            elif key == 'r':
+                turtle_controller.set_speed(4.0, 0.0) 
+            elif key == 'z':
+                turtle_controller.set_speed(-2.0, 0.0)
+            elif key == 'x':
+                turtle_controller.set_speed(-3.0, 0.0)
+            elif key == 'c':
+                turtle_controller.set_speed(-4.0, 0.0)
+
+            # Break the loop if the user presses 'f' to exi
+            elif key == 'f':
+                print("Exiting...")
+                break
+
+            # Publish the updated turtle speed
+            turtle_controller.publish_speed()
+    except rospy.ROSInterruptException:
+        pass
+
+if __name__ == '__main__':
+    settings = termios.tcgetattr(sys.stdin)
+    main()

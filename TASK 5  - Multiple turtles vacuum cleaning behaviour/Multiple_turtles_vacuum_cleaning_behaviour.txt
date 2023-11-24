@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import rospy
+from geometry_msgs.msg import Twist
+
+def move_turtle(lin_vel, ang_vel, duration, turtle_name='/turtle1'):
+    # Initialize the ROS node
+    rospy.init_node('vacumm', anonymous=True)
+    
+    # Create a publisher for the turtle's velocity
+    vel_pub = rospy.Publisher(turtle_name + '/cmd_vel', Twist, queue_size=10)
+
+    # Set the linear and angular velocities
+    twist = Twist()
+    twist.linear.x = lin_vel
+    twist.angular.z = ang_vel
+
+    # Move the turtle for the specified duration
+    rate = rospy.Rate(10)
+    start_time = rospy.get_time()
+    while (rospy.get_time() - start_time) < duration:
+        vel_pub.publish(twist)
+        rate.sleep()
+
+    # Stop the turtle after the specified duration
+    twist.linear.x = 0
+    twist.angular.z = 0
+    vel_pub.publish(twist)
+
+if __name__ == '__main__':
+    try:
+        # Example: Move the turtle in a grid pattern
+        move_turtle(lin_vel=3.0, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anitclockkwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.0, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=-1.564805, duration=1.0)  # Turn clockwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=-1.564805, duration=1.0)  # Turn clockwise
+        move_turtle(lin_vel=4.0, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.0, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=-1.564805, duration=1.0)  # Turn clockwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=-1.564805, duration=1.0)  # Turn clockwise
+        move_turtle(lin_vel=4.0, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=0.75, ang_vel=0.0, duration=2.0)  # Move forward
+        move_turtle(lin_vel=0.0, ang_vel=1.564805, duration=1.0)  # Turn anticlockwise
+        move_turtle(lin_vel=4.75, ang_vel=0.0, duration=2.0)  # Move forward
+
+    except rospy.ROSInterruptException:
+        pass
